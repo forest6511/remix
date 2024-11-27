@@ -1,5 +1,4 @@
 name: Sync Fork
-
 on:
   schedule:
     - cron: '0 1 * * *'
@@ -20,14 +19,24 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "github-actions@github.com"
           
-      - name: Add upstream repository
+      - name: Sync excluding workflows
         run: |
           git remote add upstream https://github.com/remix-run/remix.git
           git fetch upstream
           git checkout main
+          # バックアップを作成
+          cp -r .github/workflows/sync.yml /tmp/
+          # 上流の変更をマージ
           git merge upstream/main
+          # 元のsync.ymlを復元
+          mkdir -p .github/workflows/
+          cp /tmp/sync.yml .github/workflows/
+          # 他のワークフローファイルを削除
+          find .github/workflows/ -type f ! -name 'sync.yml' -delete
+          git add .
+          git commit -m "Sync fork and preserve sync workflow"
           
-      - name: Push changes to fork
+      - name: Push changes
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_TOKEN }}
         run: |
