@@ -30,7 +30,7 @@ jobs:
 
     - name: Push changes to fork
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_TOKEN }}
       run: |
         git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} main
 
