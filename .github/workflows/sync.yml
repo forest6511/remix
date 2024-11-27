@@ -8,7 +8,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: forest6511/remix/.github/actions/checkout@main
+      - uses: actions/checkout@v3
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -18,18 +18,16 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "github-actions@github.com"
           
-      - name: Sync excluding workflows
+      - name: Add upstream repository and sync
         run: |
           git remote add upstream https://github.com/remix-run/remix.git
           git fetch upstream
           git checkout main
-          cp -r .github/workflows/sync.yml /tmp/
           git merge upstream/main
+          cp -r .github/workflows/sync.yml /tmp/
           mkdir -p .github/workflows/
           cp /tmp/sync.yml .github/workflows/
           find .github/workflows/ -type f ! -name 'sync.yml' -delete
-          git add .
-          git commit -m "Sync fork and preserve sync workflow"
           
       - name: Push changes
         env:
