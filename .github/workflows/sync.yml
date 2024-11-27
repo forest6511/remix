@@ -8,8 +8,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout forked repository
-        uses: actions/checkout@v3
+      - uses: forest6511/remix/.github/actions/checkout@main
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -24,14 +23,10 @@ jobs:
           git remote add upstream https://github.com/remix-run/remix.git
           git fetch upstream
           git checkout main
-          # バックアップを作成
           cp -r .github/workflows/sync.yml /tmp/
-          # 上流の変更をマージ
           git merge upstream/main
-          # 元のsync.ymlを復元
           mkdir -p .github/workflows/
           cp /tmp/sync.yml .github/workflows/
-          # 他のワークフローファイルを削除
           find .github/workflows/ -type f ! -name 'sync.yml' -delete
           git add .
           git commit -m "Sync fork and preserve sync workflow"
